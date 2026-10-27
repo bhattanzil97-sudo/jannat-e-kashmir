@@ -557,6 +557,7 @@ Please share an official detailed itinerary and availability for our dates!`;
       submitBtn.innerHTML = '<span>Processing Booking...</span>';
 
       let bookingRef = 'JSK-2026-' + Math.floor(1000 + Math.random() * 9000);
+      let ownerNotifyUrl = null;
 
       // Attempt to save to backend API
       try {
@@ -579,31 +580,40 @@ Please share an official detailed itinerary and availability for our dates!`;
           if (result.booking && result.booking.id) {
             bookingRef = result.booking.id;
           }
+          if (result.ownerNotifyUrl) {
+            ownerNotifyUrl = result.ownerNotifyUrl;
+          }
         }
       } catch (err) {
-        console.warn('Backend API not reachable (running in static mode). Proceeding with client confirmation.', err);
+        console.warn('Backend API not reachable (running in static mode). Proceeding with client notification.', err);
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
       }
 
-      showToast(`Booking Confirmed! Ref: ${bookingRef}. Our Srinagar desk will call you shortly.`, 'success');
+      showToast(`Booking Received! Ref: ${bookingRef} (Status: ⏳ PENDING APPROVAL). Agency manager notified.`, 'info');
 
-      const whatsappText = `*New Kashmir Tour Inquiry - Jannat Safar*
-• Reference: ${bookingRef}
-• Name: ${name}
-• Phone: ${phone}
+      // WhatsApp notification payload directed to agency owner (7889491283)
+      const adminAlertText = `🚨 *NEW BOOKING ALERT - AWAITING YOUR APPROVAL*
+• Booking ID: ${bookingRef}
+• Customer Name: ${name}
+• Customer Phone: ${phone}
 • Email: ${email || 'N/A'}
 • Package: ${pkg}
 • Travel Date: ${date}
 • Guests: ${guests || '2 Adults'}
-• Notes: ${notes || 'None'}`;
+• Notes: ${notes || 'None'}
+• Status: ⏳ PENDING APPROVAL
 
-      // Offer immediate WhatsApp opening
+Action Required: Please review and approve in your CRM portal.`;
+
+      const finalNotifyUrl = ownerNotifyUrl || `https://wa.me/917889491283?text=${encodeURIComponent(adminAlertText)}`;
+
+      // Immediate notification popup & WhatsApp dispatch
       setTimeout(() => {
-        const openWA = confirm(`Your booking inquiry is registered (Ref: ${bookingRef})!\n\nWould you like to connect directly with our Srinagar travel expert on WhatsApp now?`);
-        if (openWA) {
-          window.open(`https://wa.me/917889491283?text=${encodeURIComponent(whatsappText)}`, '_blank');
+        const notifyOwner = confirm(`📋 Booking Registered (Ref: ${bookingRef})\n\nStatus: ⏳ PENDING APPROVAL\n\nYour booking request is logged and awaiting official approval by our reservations team (+91 78894 91283).\n\nClick OK to forward this notification to our manager on WhatsApp now.`);
+        if (notifyOwner) {
+          window.open(finalNotifyUrl, '_blank');
         }
       }, 400);
 

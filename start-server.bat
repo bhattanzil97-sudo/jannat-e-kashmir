@@ -13,3 +13,4 @@ start "" "http://localhost:5000/"
 "%NODE_CMD%" server/server.js
 
 pause
+

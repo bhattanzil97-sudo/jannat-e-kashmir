@@ -58,9 +58,49 @@ document.addEventListener('DOMContentLoaded', () => {
         metricPending.textContent = data.stats.pendingBookings;
         metricConfirmed.textContent = data.stats.confirmedBookings;
         metricRevenue.textContent = formatCurrency(data.stats.totalPipelineValue);
+
+        const banner = document.getElementById('pending-alert-banner');
+        const bannerText = document.getElementById('pending-alert-text');
+        if (banner && bannerText) {
+          if (data.stats.pendingBookings > 0) {
+            banner.style.display = 'flex';
+            bannerText.textContent = `You have ${data.stats.pendingBookings} booking(s) PENDING approval. Bookings remain pending until you approve them.`;
+          } else {
+            banner.style.display = 'none';
+          }
+        }
       }
     } catch (err) {
       console.error('Failed to fetch stats:', err);
+    }
+  }
+
+  async function approveBooking(id) {
+    try {
+      const res = await fetch(`/api/bookings/${id}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showAdminToast(`Booking ${id} APPROVED & CONFIRMED!`);
+        fetchBookings();
+        fetchStats();
+
+        if (data.customerConfirmUrl) {
+          setTimeout(() => {
+            const sendConfirm = confirm(`✅ Booking ${id} is now officially CONFIRMED!\n\nWould you like to send the Confirmation Ticket & Hotel Vouchers to the customer on WhatsApp now?`);
+            if (sendConfirm) {
+              window.open(data.customerConfirmUrl, '_blank');
+            }
+          }, 300);
+        }
+      } else {
+        alert(data.error || 'Failed to approve booking');
+      }
+    } catch (err) {
+      console.error('Approve error:', err);
+      alert('Network error while approving booking');
     }
   }
 
@@ -163,12 +203,23 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </td>
           <td>
-            <select class="status-select" data-id="${b.id}">
-              <option value="Pending" ${b.status === 'Pending' ? 'selected' : ''}>⏳ Pending</option>
-              <option value="Contacted" ${b.status === 'Contacted' ? 'selected' : ''}>📞 Contacted</option>
-              <option value="Confirmed" ${b.status === 'Confirmed' ? 'selected' : ''}>✅ Confirmed</option>
-              <option value="Cancelled" ${b.status === 'Cancelled' ? 'selected' : ''}>❌ Cancelled</option>
-            </select>
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+              <select class="status-select" data-id="${b.id}">
+                <option value="Pending" ${b.status === 'Pending' ? 'selected' : ''}>⏳ Pending</option>
+                <option value="Contacted" ${b.status === 'Contacted' ? 'selected' : ''}>📞 Contacted</option>
+                <option value="Confirmed" ${b.status === 'Confirmed' ? 'selected' : ''}>✅ Confirmed</option>
+                <option value="Cancelled" ${b.status === 'Cancelled' ? 'selected' : ''}>❌ Cancelled</option>
+              </select>
+              ${b.status === 'Pending' ? `
+                <button class="btn-admin btn-admin-primary btn-approve-lead" data-id="${b.id}" style="padding:0.35rem 0.65rem; font-size:0.75rem; background:#10b981; color:#fff;" title="Click to officially approve & confirm this booking">
+                  ✅ Approve Booking
+                </button>
+              ` : `
+                <div style="font-size:0.75rem; font-weight:700; color:${b.status === 'Confirmed' ? '#065f46' : '#64748b'};">
+                  ${b.status === 'Confirmed' ? '✓ Verified & Confirmed' : ''}
+                </div>
+              `}
+            </div>
             ${b.notes ? `<div style="font-size: 0.725rem; color: var(--admin-muted); max-width: 180px; margin-top: 0.35rem;" title="${b.notes}">📝 ${b.notes.substring(0, 45)}...</div>` : ''}
           </td>
           <td>
@@ -188,7 +239,14 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }).join('');
 
-    // Attach event listeners to status selects and delete buttons
+    // Attach event listeners to approve buttons, status selects and delete buttons
+    document.querySelectorAll('.btn-approve-lead').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.dataset.id;
+        approveBooking(id);
+      });
+    });
+
     document.querySelectorAll('.status-select').forEach(sel => {
       sel.addEventListener('change', (e) => {
         const id = e.target.dataset.id;
@@ -323,3 +381,4 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchBookings();
   }, 30000);
 });
+

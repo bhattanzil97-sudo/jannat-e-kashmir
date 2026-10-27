@@ -10,6 +10,7 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const OWNER_PHONE = '7889491283'; // Agency Owner Contact for instant notifications
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 
@@ -213,15 +214,91 @@ app.post('/api/bookings', (req, res) => {
     bookings.unshift(newBooking);
     writeJSON('bookings.json', bookings);
 
-    console.log(`[NEW BOOKING] ${newBooking.id} created for ${newBooking.name} (${newBooking.phone})`);
+    // Prepare instant notification message for agency owner (7889491283)
+    const ownerNotificationText = `🚨 *NEW BOOKING ALERT - AWAITING APPROVAL*
+• Booking ID: ${newBooking.id}
+• Customer: ${newBooking.name}
+• Phone: ${newBooking.phone}
+• Email: ${newBooking.email || 'N/A'}
+• Package: ${newBooking.package}
+• Travel Date: ${newBooking.travelDate}
+• Party Size: ${newBooking.guests}
+• Special Notes: ${newBooking.notes || 'None'}
+• Status: ⏳ PENDING APPROVAL
+
+Action: Please review and approve this booking in your CRM Portal:
+http://localhost:5000/admin`;
+
+    const ownerNotifyUrl = `https://wa.me/91${OWNER_PHONE}?text=${encodeURIComponent(ownerNotificationText)}`;
+
+    console.log(`========================================================`);
+    console.log(`[ALERT DISPATCH TO ${OWNER_PHONE}]`);
+    console.log(`New Booking ${newBooking.id} received from ${newBooking.name} (${newBooking.phone})`);
+    console.log(`Status: PENDING APPROVAL`);
+    console.log(`Notification URL: ${ownerNotifyUrl}`);
+    console.log(`========================================================`);
 
     res.status(201).json({
       success: true,
-      message: 'Booking request created successfully. Our Srinagar representative will connect shortly.',
-      booking: newBooking
+      message: 'Booking request registered. Status is PENDING APPROVAL by our reservations team.',
+      booking: newBooking,
+      ownerNotifyUrl,
+      ownerPhone: OWNER_PHONE
     });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to create booking', details: err.message });
+  }
+});
+
+// Dedicated Approve Endpoint: Approves a pending booking and generates customer confirmation
+app.post('/api/bookings/:id/approve', (req, res) => {
+  try {
+    const { id } = req.params;
+    const bookings = readJSON('bookings.json', []);
+    const index = bookings.findIndex(b => b.id === id);
+
+    if (index === -1) {
+      return res.status(404).json({ success: false, error: `Booking ${id} not found.` });
+    }
+
+    bookings[index].status = 'Confirmed';
+    bookings[index].approvedAt = new Date().toISOString();
+    bookings[index].approvedBy = `Agency Admin (+91 ${OWNER_PHONE})`;
+    bookings[index].updatedAt = new Date().toISOString();
+
+    writeJSON('bookings.json', bookings);
+
+    const b = bookings[index];
+    const cleanCustomerPhone = (b.phone || '').replace(/[^0-9]/g, '');
+
+    const customerConfirmationText = `🎉 *YOUR KASHMIR TOUR IS CONFIRMED!*
+Dear ${b.name},
+Your booking request with *Jannat Safar Kashmir* has been APPROVED & CONFIRMED!
+
+• Booking ID: ${b.id}
+• Tour Package: ${b.package}
+• Travel Date: ${b.travelDate}
+• Party Size: ${b.guests}
+• Status: ✅ OFFICIAL CONFIRMATION
+
+Our representative from the Srinagar office (+91 ${OWNER_PHONE}) will now share your hotel vouchers, cab driver contact, and arrival instructions.
+
+Welcome to Paradise on Earth! 🏔️✨`;
+
+    const customerConfirmUrl = cleanCustomerPhone
+      ? `https://wa.me/${cleanCustomerPhone}?text=${encodeURIComponent(customerConfirmationText)}`
+      : null;
+
+    console.log(`[BOOKING APPROVED] ${id} officially confirmed by admin.`);
+
+    res.json({
+      success: true,
+      message: `Booking ${id} has been officially APPROVED and CONFIRMED.`,
+      booking: bookings[index],
+      customerConfirmUrl
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Failed to approve booking' });
   }
 });
 
@@ -449,3 +526,4 @@ app.listen(PORT, () => {
   console.log(` API Endpoint:    http://localhost:${PORT}/api/health`);
   console.log('========================================================');
 });
+
