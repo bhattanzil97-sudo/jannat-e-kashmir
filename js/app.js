@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 Please share an official detailed itinerary and availability for our dates!`;
 
-      calcWhatsappBtn.href = `https://wa.me/919419078241?text=${encodeURIComponent(msg)}`;
+      calcWhatsappBtn.href = `https://wa.me/917889491283?text=${encodeURIComponent(msg)}`;
     }
   }
 
@@ -603,7 +603,7 @@ Please share an official detailed itinerary and availability for our dates!`;
       setTimeout(() => {
         const openWA = confirm(`Your booking inquiry is registered (Ref: ${bookingRef})!\n\nWould you like to connect directly with our Srinagar travel expert on WhatsApp now?`);
         if (openWA) {
-          window.open(`https://wa.me/919419078241?text=${encodeURIComponent(whatsappText)}`, '_blank');
+          window.open(`https://wa.me/917889491283?text=${encodeURIComponent(whatsappText)}`, '_blank');
         }
       }, 400);
 
