@@ -1,0 +1,26 @@
+{
+  "name": "jannat-safar-kashmir",
+  "version": "1.0.0",
+  "description": "Professional Tour & Travels Web Application & Booking Backend for Kashmir",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
+  },
+  "keywords": [
+    "kashmir",
+    "tour-and-travels",
+    "travel-agency",
+    "srinagar",
+    "gulmarg",
+    "pahalgam",
+    "booking-system",
+    "crm"
+  ],
+  "author": "bhattanzil97-sudo",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1"
+  }
+}

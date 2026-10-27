@@ -537,38 +537,75 @@ Please share an official detailed itinerary and availability for our dates!`;
   }
 
   // =========================================================================
-  // Booking Form Submission
+  // Booking Form Submission (Connected to Backend API)
   // =========================================================================
 
   if (bookingForm) {
-    bookingForm.addEventListener('submit', (e) => {
+    bookingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('book-name').value;
-      const phone = document.getElementById('book-phone').value;
-      const email = document.getElementById('book-email').value;
+      const name = document.getElementById('book-name').value.trim();
+      const phone = document.getElementById('book-phone').value.trim();
+      const email = document.getElementById('book-email').value.trim();
       const date = document.getElementById('book-date').value;
-      const guests = document.getElementById('book-guests').value;
+      const guests = document.getElementById('book-guests').value.trim();
       const pkg = packageSelect.value;
-      const notes = document.getElementById('book-notes').value;
+      const notes = document.getElementById('book-notes').value.trim();
+
+      const submitBtn = bookingForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Processing Booking...</span>';
+
+      let bookingRef = 'JSK-2026-' + Math.floor(1000 + Math.random() * 9000);
+
+      // Attempt to save to backend API
+      try {
+        const response = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            phone,
+            email,
+            package: pkg,
+            travelDate: date,
+            guests,
+            notes
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.booking && result.booking.id) {
+            bookingRef = result.booking.id;
+          }
+        }
+      } catch (err) {
+        console.warn('Backend API not reachable (running in static mode). Proceeding with client confirmation.', err);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+
+      showToast(`Booking Confirmed! Ref: ${bookingRef}. Our Srinagar desk will call you shortly.`, 'success');
 
       const whatsappText = `*New Kashmir Tour Inquiry - Jannat Safar*
+• Reference: ${bookingRef}
 • Name: ${name}
 • Phone: ${phone}
-• Email: ${email}
+• Email: ${email || 'N/A'}
 • Package: ${pkg}
 • Travel Date: ${date}
-• Guests: ${guests}
+• Guests: ${guests || '2 Adults'}
 • Notes: ${notes || 'None'}`;
-
-      showToast(`Thank you ${name}! Your booking request has been received. Our Srinagar desk will contact you within 15 minutes.`, 'success');
 
       // Offer immediate WhatsApp opening
       setTimeout(() => {
-        const openWA = confirm(`Thank you ${name}! Would you also like to open WhatsApp to connect directly with our Kashmir travel expert right now?`);
+        const openWA = confirm(`Your booking inquiry is registered (Ref: ${bookingRef})!\n\nWould you like to connect directly with our Srinagar travel expert on WhatsApp now?`);
         if (openWA) {
           window.open(`https://wa.me/919419078241?text=${encodeURIComponent(whatsappText)}`, '_blank');
         }
-      }, 500);
+      }, 400);
 
       bookingForm.reset();
     });

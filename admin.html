@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agency CRM & Bookings Desk | Jannat Safar Kashmir</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ea580c'><path d='M12 2L13.8 7.4L18.5 4.5L16.2 9.8L21.8 10.2L17.5 13.8L20.8 18.2L15.3 16.5L13.5 22L12 17.5L10.5 22L8.7 16.5L3.2 18.2L6.5 13.8L2.2 10.2L7.8 9.8L5.5 4.5L10.2 7.4L12 2Z'/></svg>">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- Top Admin Navbar -->
+  <header class="admin-header">
+    <div class="admin-brand">
+      <span class="admin-logo-badge">JSK</span>
+      <div>
+        <div class="admin-title">Jannat Safar Kashmir</div>
+        <div class="admin-subtitle">Reservations & Lead Management Desk</div>
+      </div>
+    </div>
+
+    <div class="admin-actions">
+      <button class="btn-admin btn-admin-primary" id="open-new-booking-btn">
+        <span>+ New Booking / Lead</span>
+      </button>
+      <a href="/" target="_blank" class="btn-admin btn-admin-outline">
+        <span>🌐 View Live Website</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="admin-container">
+    <!-- KPI Analytics Cards -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-info">
+          <h5>Total Inquiries</h5>
+          <div class="value" id="metric-total">0</div>
+        </div>
+        <div class="metric-icon total">📋</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-info">
+          <h5>Pending Action</h5>
+          <div class="value" id="metric-pending" style="color: #b45309;">0</div>
+        </div>
+        <div class="metric-icon pending">⏳</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-info">
+          <h5>Confirmed Tours</h5>
+          <div class="value" id="metric-confirmed" style="color: #065f46;">0</div>
+        </div>
+        <div class="metric-icon confirmed">✅</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-info">
+          <h5>Pipeline Value</h5>
+          <div class="value" id="metric-revenue" style="color: #0369a1;">₹0</div>
+        </div>
+        <div class="metric-icon revenue">💰</div>
+      </div>
+    </section>
+
+    <!-- CRM Controls & Table -->
+    <section>
+      <div class="crm-controls">
+        <div class="status-tabs">
+          <button class="status-tab active" data-status="all">All Leads</button>
+          <button class="status-tab" data-status="pending">Pending</button>
+          <button class="status-tab" data-status="contacted">Contacted</button>
+          <button class="status-tab" data-status="confirmed">Confirmed</button>
+          <button class="status-tab" data-status="cancelled">Cancelled</button>
+        </div>
+
+        <div class="crm-search-wrap">
+          <input type="text" id="crm-search-input" class="crm-search" placeholder="Search by name, phone, or Ref ID...">
+          <button class="btn-admin btn-admin-outline" id="export-csv-btn" style="background:#0b3b32; color:#fff;" title="Download CSV spreadsheet">
+            <span>📥 Export CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Ref / Date</th>
+              <th>Customer Details</th>
+              <th>Package & Schedule</th>
+              <th>Est. Amount</th>
+              <th>Status & Notes</th>
+              <th>Quick Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-table-body">
+            <!-- Populated via js/admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Add New Booking Modal -->
+  <div class="admin-modal-backdrop" id="new-booking-modal">
+    <div class="admin-modal-dialog">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title">Record New Inquiry / Booking</h3>
+        <button id="close-new-booking-btn" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="new-booking-form">
+        <div class="admin-form-grid-2">
+          <div class="admin-form-group">
+            <label for="new-name">Customer Name *</label>
+            <input type="text" id="new-name" class="admin-form-control" required placeholder="e.g. Tariq Lone">
+          </div>
+          <div class="admin-form-group">
+            <label for="new-phone">Phone / WhatsApp *</label>
+            <input type="tel" id="new-phone" class="admin-form-control" required placeholder="e.g. +91 94190 XXXXX">
+          </div>
+        </div>
+
+        <div class="admin-form-grid-2">
+          <div class="admin-form-group">
+            <label for="new-email">Email Address</label>
+            <input type="email" id="new-email" class="admin-form-control" placeholder="e.g. tariq@gmail.com">
+          </div>
+          <div class="admin-form-group">
+            <label for="new-package">Package / Itinerary</label>
+            <select id="new-package" class="admin-form-control">
+              <option value="Romantic Kashmir: Houseboat & Snowy Peaks">Romantic Kashmir: Houseboat & Snowy Peaks (6D/5N)</option>
+              <option value="Grand Kashmir Family Delight: 5 Valleys Tour">Grand Kashmir Family Delight: 5 Valleys Tour (7D/6N)</option>
+              <option value="Gulmarg Snow Paradise & Ski Expedition">Gulmarg Snow Paradise & Ski Expedition (5D/4N)</option>
+              <option value="Hidden Kashmir: Gurez Valley & Doodhpathri">Hidden Kashmir: Gurez Valley & Doodhpathri (8D/7N)</option>
+              <option value="Royal Kashmir: 5-Star Heritage & Wazwan Trail">Royal Kashmir: 5-Star Heritage & Wazwan Trail (6D/5N)</option>
+              <option value="Glimpse of Kashmir: Quick Weekend Getaway">Glimpse of Kashmir: Quick Weekend Getaway (4D/3N)</option>
+              <option value="Custom Tailor-made Tour">Custom Tailor-made Tour</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-form-grid-2">
+          <div class="admin-form-group">
+            <label for="new-date">Travel Date *</label>
+            <input type="date" id="new-date" class="admin-form-control" required>
+          </div>
+          <div class="admin-form-group">
+            <label for="new-guests">Party Size (Guests)</label>
+            <input type="text" id="new-guests" class="admin-form-control" placeholder="e.g. 2 Adults, 2 Kids" value="2 Adults">
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label for="new-amount">Estimated Quotation (INR ₹)</label>
+          <input type="number" id="new-amount" class="admin-form-control" placeholder="e.g. 48000">
+        </div>
+
+        <div class="admin-form-group">
+          <label for="new-notes">Special Preferences / Agent Notes</label>
+          <textarea id="new-notes" class="admin-form-control" style="min-height:70px;" placeholder="Room category, cab type, meal preference, extra activities..."></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem;">
+          <button type="button" onclick="document.getElementById('new-booking-modal').classList.remove('open')" class="btn-admin btn-admin-outline" style="color:var(--admin-text); border-color:var(--admin-border);">
+            Cancel
+          </button>
+          <button type="submit" class="btn-admin btn-admin-primary">
+            Save & Add to CRM
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Box -->
+  <div class="admin-toast-wrap" id="admin-toast-wrap"></div>
+
+  <!-- Scripts -->
+  <script src="js/admin.js"></script>
+</body>
+</html>
