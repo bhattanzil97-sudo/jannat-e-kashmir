@@ -542,7 +542,7 @@ const TOUR_DATA = {
       rating: 5,
       date: 'Visited January 2026',
       badge: 'Honeymoon Couple',
-      text: 'Our honeymoon in Kashmir was like stepping straight into a fairytale! Jannat Safar took care of every single detail—from the heated houseboat on Dal Lake with rose petals to our Gondola tickets in Gulmarg. Our driver-guide Bashir was polite, knowledgeable, and made us feel so safe throughout!',
+      text: 'Our honeymoon in Kashmir was like stepping straight into a fairytale! Bhat Tanzil Kashmir took care of every single detail—from the heated houseboat on Dal Lake with rose petals to our Gondola tickets in Gulmarg. Our driver-guide Bashir was polite, knowledgeable, and made us feel so safe throughout!',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
     },
     {
@@ -551,7 +551,7 @@ const TOUR_DATA = {
       rating: 5,
       date: 'Visited December 2025',
       badge: 'Family Tour',
-      text: 'Traveling with elderly parents and two kids can be stressful, but the Jannat Safar team organized a clean, comfortable Innova Crysta and wheelchair-friendly accommodations where needed. The kids had a blast playing in the snow at Gulmarg! Truly 5-star service.',
+      text: 'Traveling with elderly parents and two kids can be stressful, but the Bhat Tanzil Kashmir team organized a clean, comfortable Innova Crysta and wheelchair-friendly accommodations where needed. The kids had a blast playing in the snow at Gulmarg! Truly 5-star service.',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80'
     },
     {

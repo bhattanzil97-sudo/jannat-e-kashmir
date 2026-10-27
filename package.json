@@ -1,7 +1,7 @@
 {
-  "name": "jannat-safar-kashmir",
+  "name": "bhat-tanzil",
   "version": "1.0.0",
-  "description": "Professional Tour & Travels Web Application & Booking Backend for Kashmir",
+  "description": "Bhat Tanzil Kashmir - Tour & Travels Web Application & Booking Backend",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",

@@ -1,5 +1,5 @@
 /**
- * Jannat Safar Kashmir - Enterprise Travel Booking & Management Server
+ * Bhat Tanzil Kashmir - Enterprise Travel Booking & Management Server
  * Express.js REST API with Persistent JSON Database and Static File Serving.
  */
 
@@ -74,7 +74,7 @@ app.use(express.static(ROOT_DIR));
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
-    app: 'Jannat Safar Kashmir Travel Portal API',
+    app: 'Bhat Tanzil Kashmir Travel Portal API',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });
@@ -197,7 +197,7 @@ app.post('/api/bookings', (req, res) => {
     // Generate unique ID like JSK-2026-4892
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const newBooking = {
-      id: `JSK-2026-${randomSuffix}`,
+      id: `BTK-2026-${randomSuffix}`,
       createdAt: new Date().toISOString(),
       name: name.trim(),
       phone: phone.trim(),
@@ -273,7 +273,7 @@ app.post('/api/bookings/:id/approve', (req, res) => {
 
     const customerConfirmationText = `🎉 *YOUR KASHMIR TOUR IS CONFIRMED!*
 Dear ${b.name},
-Your booking request with *Jannat Safar Kashmir* has been APPROVED & CONFIRMED!
+Your booking request with *Bhat Tanzil Kashmir* has been APPROVED & CONFIRMED!
 
 • Booking ID: ${b.id}
 • Tour Package: ${b.package}
@@ -520,7 +520,7 @@ app.get('*', (req, res) => {
 // Start Server
 app.listen(PORT, () => {
   console.log('========================================================');
-  console.log(` Jannat Safar Kashmir - Enterprise Server Running!`);
+  console.log(` Bhat Tanzil Kashmir - Enterprise Server Running!`);
   console.log(` Customer Portal: http://localhost:${PORT}/`);
   console.log(` Admin CRM Desk:  http://localhost:${PORT}/admin`);
   console.log(` API Endpoint:    http://localhost:${PORT}/api/health`);

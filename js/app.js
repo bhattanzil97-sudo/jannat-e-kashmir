@@ -1,5 +1,5 @@
 /**
- * Jannat Safar Kashmir - Main Application Script
+ * Bhat Tanzil Kashmir - Main Application Script
  * Implements package filtering, currency conversion, itinerary modals,
  * custom trip calculator, FAQ accordions, and WhatsApp inquiry handling.
  */
@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Prepare WhatsApp Message Link
     if (calcWhatsappBtn) {
-      const msg = `Hello Jannat Safar Kashmir team! I planned a customized Kashmir tour on your website:
+      const msg = `Hello Bhat Tanzil Kashmir team! I planned a customized Kashmir tour on your website:
 • Destinations: ${selectedDestinations.join(', ')}
 • Duration: ${nights + 1} Days / ${nights} Nights
 • Accommodation: ${hotelTier.toUpperCase()}
@@ -556,7 +556,7 @@ Please share an official detailed itinerary and availability for our dates!`;
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span>Processing Booking...</span>';
 
-      let bookingRef = 'JSK-2026-' + Math.floor(1000 + Math.random() * 9000);
+      let bookingRef = 'BTK-2026-' + Math.floor(1000 + Math.random() * 9000);
       let ownerNotifyUrl = null;
 
       // Attempt to save to backend API

@@ -20,7 +20,7 @@ $root = $PSScriptRoot
 if (-not $root) { $root = (Get-Location).Path }
 
 Write-Host "===================================================="
-Write-Host " Jannat Safar Kashmir - Local Web Server Running!"
+Write-Host " Bhat Tanzil Kashmir - Local Web Server Running!"
 Write-Host " URL: http://localhost:$Port/"
 Write-Host " Root Directory: $root"
 Write-Host " Press Ctrl+C in this terminal to stop the server."

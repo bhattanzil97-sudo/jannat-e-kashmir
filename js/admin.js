@@ -1,5 +1,5 @@
 /**
- * Jannat Safar Kashmir - Admin CRM Management Client Script
+ * Bhat Tanzil Kashmir - Admin CRM Management Client Script
  * Handles real-time API communication, lead updates, CSV export, and stats.
  */
 
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bookingsTableBody.innerHTML = state.bookings.map(b => {
       const statusClass = b.status.toLowerCase();
       const cleanPhone = (b.phone || '').replace(/[^0-9]/g, '');
-      const waMessage = `Hi ${b.name}, thank you for inquiring about ${b.package} with Jannat Safar Kashmir (Ref: ${b.id}). I am Tanzil from the Srinagar office. How can I assist you with your travel dates?`;
+      const waMessage = `Hi ${b.name}, thank you for inquiring about ${b.package} with Bhat Tanzil Kashmir (Ref: ${b.id}). I am Tanzil from the Srinagar office. How can I assist you with your travel dates?`;
 
       return `
         <tr>
